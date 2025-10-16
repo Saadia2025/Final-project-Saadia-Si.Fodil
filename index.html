@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Banks Data</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+   <input type="button"
+       value=" Final  project: ETL Pipeline with  API and Node.js"
+       onclick="window.location.href='Description-projet.html';">
+  <p>
+  </br>
+  </br>
+  <span style="font-size: 2em; font-weight: bold;color:#4590db;">Largest Banks (After ETL)</span>
+  <span style="font-size: 2em; font-weight: bold; margin-left: 300px; color:#4590db;">Largest Banks with threhold</span>
+</p>
+</br>
+</br>
+  <section class="content-container">
+    <div class="Line" style="display: flex; gap: 100px;">
+        <div class="table-item">
+            <table border="1" id="bank-table-all">
+                <thead>
+                    <tr>
+                        <th>Country</th>
+                        <th>GDP (USD billions)</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="table-item">
+            <label for="seuil">Enter the threshold >= 10000 :</label>
+            <input type="number" id="seuil" value=" 10000">
+            <button id="generateBtn">Display the Results</button>
+            <p id="query"></p>
+
+            <table border="1" id="bank-table-filtered">
+                <thead>
+                    <tr>
+                        <th>Country</th>
+                        <th>GDP (USD billions)</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+  <script>
+    // Charger toutes les banques pour la première table
+    async function loadAllBanks() {
+      try {
+        const res = await fetch('/api/banks');
+        const data = await res.json();
+        const tbody = document.querySelector('#bank-table-all tbody');
+        tbody.innerHTML = '';
+        data.forEach(row => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${row.Country}</td><td>${row.GDP_USD_billions}</td>`;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error('Erreur lors du chargement des banques :', err);
+      }
+    }
+
+    loadAllBanks();
+
+    // Charger les banques filtrées selon le seuil
+    const button = document.getElementById('generateBtn');
+    const queryParagraph = document.getElementById('query');
+
+    button.addEventListener('click', async () => {
+      const seuil = document.getElementById('seuil').value;
+     // queryParagraph.textContent = `SELECT * FROM Largest_banks WHERE GDP_USD_billions >= ${seuil};`;
+
+      try {
+        const res = await fetch(`/api/banks-filtered?seuil=${seuil}`);
+        const data = await res.json();
+        const tbody = document.querySelector('#bank-table-filtered tbody');
+        tbody.innerHTML = '';
+        data.forEach(row => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${row.Country}</td><td>${row.GDP_USD_billions}</td>`;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error('Erreur lors du filtrage des banques :', err);
+      }
+    });
+  </script>
+  <!--back-to-top-->
+   <a href="#top" class="back-to-top">
+    <span style="color:black;">^</span></a>
+
+  <!--footer-->
+   <footer><p>&copy; Webseite für passerelle 2025 "Saadia Si Fodil"</p></footer>
+     
+  
+</body>
+
+</html>
+
